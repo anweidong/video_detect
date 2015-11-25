@@ -1,13 +1,14 @@
 # video_dect
 Final Project of csc420 in University of Toronto
 
-2015-11-23
+######2015-11-23
 division of work
 Weidong: face detection, classification, visualization
 Rico: Shot detection, logo detection, face tracking
 
-2015-11-24
-Weidong: finish face detection
+######2015-11-24
+**Weidong:**   
+         finish face detection
          code is in code/dpm/demo.m
          result is in code/dpm/clip*_det (in n by 4 matrices where each row reprensents a detection)
          visulization of the result is in code/dpm/clip*_det_frame
@@ -23,8 +24,9 @@ Weidong: finish face detection
 
          imgdetect will raise an error if no face is detected. (not a big problem).
          
-2015-11-25
-Rico:    shot_detect function take 5 parameters. e.g. shot_detect(65, 199, 'jpg', 'clip_2/', 16) 
-         where 16 means there are 16*16 blocks used for getting optical flow, 65 and 199 are the starting and ending image                      numbers. When you test on clip_3, you need to change "%03d" to "%04d" in line 10 and 11 before run it.
+######2015-11-25
+**Rico:**  
+         shot_detect function take 5 parameters. e.g. shot_detect(65, 199, 'jpg', 'clip_2/', 16) 
+         where 16 means there are 16*16 blocks used for getting optical flow, 65 and 199 are the starting and ending image                      numbers. 
          
-         Questions need to ask Prof: if partial shot change also counts? like o35 in clip_1
+         Questions need to ask Prof: if partial shot change also counts? like 035 in clip_1
