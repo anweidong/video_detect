@@ -29,6 +29,6 @@ Rico: Shot detection, logo detection, face tracking
          shot_detect function take 5 parameters. e.g. shot_detect(65, 199, 'jpg', 'clip_2/', 16) 
          where 16 means there are 16*16 blocks used for getting optical flow, 65 and 199 are the starting and ending image                      numbers. 
          
-         shot1 and shot2 in shot_data/result are the final shot change image numbers, still working on shot3
+         shot1, shot2 and shot3 corresponding to clip_1 _2 _3 in shot_data/result are the final shot change image numbers
          
          Questions need to ask Prof: if partial shot change also counts? like 035 in clip_1
