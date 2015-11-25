@@ -23,7 +23,8 @@ Weidong: finish face detection
 
          imgdetect will raise an error if no face is detected. (not a big problem).
          
-2015-11-24
+2015-11-25
 Rico:    shot_detect function take 5 parameters. e.g. shot_detect(65, 199, 'jpg', 'clip_2/', 16) 
-         where 16 means there are 16*16 blocks used for getting optical flow, 65 and 199 are the starting and ending image             numbers. When you test on clip_3, you need to change "%03d" to "%04d" in line 10 and 11 before run it.
+         where 16 means there are 16*16 blocks used for getting optical flow, 65 and 199 are the starting and ending image                      numbers. When you test on clip_3, you need to change "%03d" to "%04d" in line 10 and 11 before run it.
          
+         Questions need to ask Prof: if partial shot change also counts? like o35 in clip_1
