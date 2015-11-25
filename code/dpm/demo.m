@@ -1,71 +1,41 @@
 function demo()
 startup;
 
+start=22;
+final=200;
 fprintf('compiling the code...');
-compile;
+% compile;
 fprintf('done.\n\n');
-
-load('VOC2007/car_final');
+mkdir clip3_det
+mkdir clip3_det_frame
+load('../face_final');
 model.vis = @() visualizemodel(model, ...
                   1:2:length(model.rules{model.start}));
-test('000034.jpg', model, -0.3);
+for f=start:final
+test(sprintf('../../clip_1/%03d.jpg', f), model, -.3, sprintf('%03d', f));
+end
 
-load('INRIA/inriaperson_final');
-model.vis = @() visualizemodel(model, ...
-                  1:2:length(model.rules{model.start}));
-test('000061.jpg', model, -0.3);
-
-load('VOC2007/person_grammar_final');
-model.class = 'person grammar';
-model.vis = @() visualize_person_grammar_model(model, 6);
-test('000061.jpg', model, -0.6);
-
-load('VOC2007/bicycle_final');
-model.vis = @() visualizemodel(model, ...
-                  1:2:length(model.rules{model.start}));
-test('000084.jpg', model, -0.3);
-
-function test(imname, model, thresh)
+function test(imname, model, thresh, outname)
 cls = model.class;
 fprintf('///// Running demo for %s /////\n\n', cls);
 
 % load and display image
+h = figure;
 im = imread(imname);
 clf;
 image(im);
 axis equal; 
-axis on;
-disp('input image');
-disp('press any key to continue'); pause;
-disp('continuing...');
-
-% load and display model
-model.vis();
-disp([cls ' model visualization']);
-disp('press any key to continue'); pause;
-disp('continuing...');
-
+axis off;
 % detect objects
 [ds, bs] = imgdetect(im, model, thresh);
-top = nms(ds, 0.5);
-clf;
-if model.type == model_types.Grammar
-  bs = [ds(:,1:4) bs];
-end
-showboxes(im, reduceboxes(model, bs(top,:)));
+top = nms(ds, .35);
 disp('detections');
-disp('press any key to continue'); pause;
-disp('continuing...');
 
-if model.type == model_types.MixStar
-  % get bounding boxes
-  bbox = bboxpred_get(model.bboxpred, ds, reduceboxes(model, bs));
-  bbox = clipboxes(im, bbox);
-  top = nms(bbox, 0.5);
-  clf;
-  showboxes(im, bbox(top,:));
-  disp('bounding boxes');
-  disp('press any key to continue'); pause;
-end
+det = reduceboxes(model, bs(top,:));
+det = det(:,1:4);
+showboxesMy(det(:,1:4), 'r');
+save(sprintf('clip1_det/%s.mat', outname), 'det');
+saveas(h,sprintf('clip1_det_frame/%s_det.jpg', outname))
+close(h);
 
 fprintf('\n');
