@@ -1,6 +1,6 @@
-load Li2
-load Lsig2
-load Lmiu2
+load ../shots_data/measures/Li2
+load ../shots_data/measures/Lsig2
+load ../shots_data/measures/Lmiu2
 t = 15;
 ind = 65;
 shot = [];
@@ -16,14 +16,19 @@ end
 % figure;
 % plot(Li2, Lmiu2);
 result = [];
-for i=1:size(shot,2)-1
-    if shot(i) ~= shot(i+1)-1
+for i=1:size(shot,2)
+    if i<size(shot,2)
+        if shot(i) ~= shot(i+1)-1
+            result = [result shot(i)];
+        end
+        if i==size(shot,2)-1
+            result = [result shot(i+1)];
+            break
+        end
+    else
         result = [result shot(i)];
-    end
-    if i==size(shot,2)-1
-        result = [result shot(i+1)];
     end
 end
 shot2 = result;
             
-save('shot2.mat', 'shot2', '-mat');
+save('../shots_data/result/shot2.mat', 'shot2', '-mat');

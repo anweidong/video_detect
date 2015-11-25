@@ -1,8 +1,13 @@
 function [Li, Lsig, Lmiu] = shot_detect(start_ind, end_ind, img_format, img_path, n)
-% start_ind and end_ind are the starting and ending image, so we can trace
+% 1. start_ind and end_ind are the starting and ending images, so we can trace
 % all of the images in a path
-% img_path is a path containing all the images
-% output_path is the path to store all the output images
+% 2. img_path is a path containing all the images
+% 3. img_path is the image format
+% 4. n is the size of a n*n block for each image
+% 5. Li is a list of image indices
+% 6. Lsig is a list of the standard deveriation of I*w in opical flow
+% 7. algorithm
+% 8. Lmiu is a list of the mean of I*w in optical flow algorithm
 Li = zeros(1, end_ind-start_ind);
 Lsig = zeros(1, end_ind-start_ind);
 Lmiu = zeros(1, end_ind-start_ind);
@@ -34,18 +39,13 @@ for i = start_ind+1 : end_ind % compare the one with its previous
             blocks = blocks+1;
             u = 0;
             v = 0;
-            % in one block
-%            i
             x = q;
             y = p;
             for k=1:10
-%                 x = x+u
-%                 y = y+v
-%                 round(y:y+n-1)
-%                 round(x:x+n-1)
-%                 size(im2)
-                I1 = im2(round(y:y+n-1),round(x:x+n-1));
-                I0 = im1(round(y:y+n-1),round(x:x+n-1));
+                % optical flow algorithm from: 
+                % http://www.researchgate.net/publication/220979446_New_video_shot_change_detection_algorithm_based_on_accurate_motion_and_illumination_estimation
+                I1 = im2(y:y+n-1,x:x+n-1);
+                I0 = im1(y:y+n-1,x:x+n-1);
                 [Ix, Iy] = imgradientxy(I0);
                 Ix2 = sum(sum(Ix .* Ix));
                 IxIy = sum(sum(Ix .* Iy));
@@ -75,6 +75,7 @@ for i = start_ind+1 : end_ind % compare the one with its previous
             sig1 = sig1 + (I*w);
         end
     end
+    % compute the mean and standard deviation of the values of I * w
     miu = miu / blocks;
     sig = sig2 - 2*miu*sig1 + blocks*miu^2;
     sig = sqrt(sig/blocks);
