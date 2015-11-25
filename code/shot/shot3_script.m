@@ -1,6 +1,6 @@
-load ../shots_data/measures/Li3
-load ../shots_data/measures/Lsig3
-load ../shots_data/measures/Lmiu3
+load ../../shots_data/measures/Li3
+load ../../shots_data/measures/Lsig3
+load ../../shots_data/measures/Lmiu3
 t = 20;
 ind = 16;
 shot = [];
@@ -36,4 +36,4 @@ for i=1:size(shot,2)-1
 end
 shot3 = result;
 
-save('../shots_data/result/shot3.mat', 'shot3', '-mat');
+save('../../shots_data/result/shot3.mat', 'shot3', '-mat');
