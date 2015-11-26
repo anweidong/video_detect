@@ -1,0 +1,96 @@
+function face_track(frame_dir, det_dir, start_frame, end_frame)
+% frame_dir is a path to the images
+% det_dir is a path to the image detections
+% start_ and end_frame are the index of start and end images
+path=[];
+FRAME_DIR = frame_dir;
+DET_DIR = det_dir;
+for i = start_frame:end_frame
+    if isempty(strfind(frame_dir,'clip_3'))==0
+        name = sprintf('%04d.jpg', i);
+        det_name = sprintf('%04d.mat', i);
+    else
+        name = sprintf('%03d.jpg', i);
+        det_name = sprintf('%03d.mat', i);
+    end
+    im = imread(fullfile(FRAME_DIR, name));
+    data = load(fullfile(DET_DIR, det_name));
+    bbox = data.det;
+    if length(size(im))==3
+        im = rgb2gray(im);
+    end
+    I{i-first_frame+1} = im;
+end 
+
+
+
+
+    if i == start_frame
+        for di=1:size(d1,1)
+            path = [path sim(d1(di),d2(di)) d1(di) d2(di)];
+        end
+    else
+        new_path = [];
+        for di=1:size(d1,1)
+            for dj=1:size(path,1)
+                if d1(di)==path(dj,size(path,2))
+                    new_path = [new_path path(dj,1)+sim(d1(di),d2(di)) ...
+                        path(dj,2:size(path,2)) d2(di)];
+                end
+            end
+        end
+        path = new_path;
+    end
+end
+[~, order] = sort(path(:,1));
+path = path(order,:);
+result = [];
+while isempty(path)~=1
+    result = [result;path(1,2:size(path,2))];
+    for i=1:size(path,1)
+        current_path = result(size(result,1),:);
+        % delete the duplicate
+        for j=1:size(current_path,2)
+            if path(i,j+1)==current_path(1,j)
+                path(i,:) = zeros(1,size(path,2));
+            end
+        end
+    end
+    path(~any(path,2),:) = [];
+end
+c = ['r' 'b' 'g' 'c' 'y' 'm']';
+for i = start_frame:end_frame
+    if isempty(strfind(frame_dir,'clip_3'))==0
+        name = sprintf('%04d.jpg', i);
+        det_name = sprintf('%04d.mat', i);
+    else
+        name = sprintf('%03d.jpg', i);
+        det_name = sprintf('%03d.mat', i);
+    end
+    im = imread(fullfile(FRAME_DIR, name));
+    data = load(fullfile(DET_DIR, det_name));
+    dets = data.det;
+    boxes = dets(result(:,i-start_frame+1),1:4)
+    figure;
+    image(im);
+    axis image;
+    axis off;
+    hold on;
+    for j=1:size(boxes,1)
+        showboxesMy(boxes(j,:),c(j));
+    end
+end
+end
+
+
+
+
+function bbox = posScaleToBbox(object)
+% inverse of bboxToPosScale.m
+
+u1 = object(:,1)-object(:,3)/2;
+v1 = object(:,2)-object(:,4)/2;
+u2 = object(:,1)+object(:,3)/2;
+v2 = object(:,2)+object(:,4)/2;
+
+bbox = [u1 v1 u2 v2];

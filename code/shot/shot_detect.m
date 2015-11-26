@@ -12,7 +12,7 @@ Li = zeros(1, end_ind-start_ind);
 Lsig = zeros(1, end_ind-start_ind);
 Lmiu = zeros(1, end_ind-start_ind);
 for i = start_ind+1 : end_ind % compare the one with its previous
-    if strcmp(img_path,'clip_3')==1 || strcmp(img_path,'clip_3/')==1
+    if isempty(strfind(img_path,'clip_3'))==0
         im_cur = imread(sprintf('%s/%04d.%s', img_path, i, img_format));
         im_pre = imread(sprintf('%s/%04d.%s', img_path, i-1, img_format));
     else
