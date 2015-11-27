@@ -1,3 +1,4 @@
+% Credit from http://www.cvlibs.net/software/trackbydet/ by Nov 25, 2015
 function o = boxoverlap(a, b)
 % Compute the symmetric intersection over union overlap between a set of
 % bounding boxes in a and a single bounding box in b.

@@ -1,3 +1,4 @@
+% Credit from http://www.cvlibs.net/software/trackbydet/ by Nov 25, 2015
 function [c,d,u1,v1,C] = xcorr(T,S)
 % u1,v1 = search area pixel where upper left template corner is anchored
 

@@ -1,3 +1,4 @@
+% Credit from http://www.cvlibs.net/software/trackbydet/ by Nov 25, 2015
 function s = kfcorrect(s)
 
 % x = Ax + w, w ~ N(0,Q)

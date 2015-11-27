@@ -1,3 +1,4 @@
+% Credit from http://www.cvlibs.net/software/trackbydet/ by Nov 25, 2015
 function tracklets_kitti = convertToKITTI(tracklets, start_f, end_f)
 
 for i=1:end_f-start_f+1

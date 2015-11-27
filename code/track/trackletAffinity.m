@@ -1,3 +1,4 @@
+% Credit from http://www.cvlibs.net/software/trackbydet/ by Nov 25, 2015
 function dist = trackletAffinity(t1,t2,I,show)
 
 % crop tracks to maximum length of n frames

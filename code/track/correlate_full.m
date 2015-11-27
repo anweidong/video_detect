@@ -1,3 +1,4 @@
+% Credit from http://www.cvlibs.net/software/trackbydet/ by Nov 25, 2015
 function [c,d] = correlate_full(t1,t2,I)
 
 % compute bounding boxes

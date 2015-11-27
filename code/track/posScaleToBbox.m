@@ -1,3 +1,4 @@
+% Credit from http://www.cvlibs.net/software/trackbydet/ by Nov 25, 2015
 function bbox = posScaleToBbox(object)
 % inverse of bboxToPosScale.m
 u1 = object(:,1)-object(:,3)/2;

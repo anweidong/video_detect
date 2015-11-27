@@ -1,3 +1,4 @@
+% Credit from http://www.cvlibs.net/software/trackbydet/ by Nov 25, 2015
 function dist = trackletLocation(object,tracklet,I)
 % intersection over union
 bbox1 = posScaleToBbox(object);

@@ -1,3 +1,4 @@
+% Credit from http://www.cvlibs.net/software/trackbydet/ by Nov 25, 2015
 function [c,duv] = correlate(t1,t2,I,show)
 
 % compute bounding boxes

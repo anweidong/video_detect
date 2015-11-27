@@ -1,3 +1,4 @@
+% Credit from http://www.cvlibs.net/software/trackbydet/ by Nov 25, 2015
 function s = kfpredict(s)
 s.x = s.A*s.x;
 s.P = s.A*s.P*s.A' + s.Q;

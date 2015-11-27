@@ -1,3 +1,4 @@
+% Credit from http://www.cvlibs.net/software/trackbydet/ by Nov 25, 2015
 function s = kfinit(object,std_process,std_measurement)
 
 s.A      = eye(8);                     % system matrix

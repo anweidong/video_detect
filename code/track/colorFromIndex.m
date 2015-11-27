@@ -1,3 +1,4 @@
+% Credit from http://www.cvlibs.net/software/trackbydet/ by Nov 25, 2015
 function [col,style] = colorFromIndex(idx)
 
 idx = mod(idx,19);

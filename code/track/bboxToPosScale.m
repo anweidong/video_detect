@@ -1,3 +1,4 @@
+% Credit from http://www.cvlibs.net/software/trackbydet/ by Nov 25, 2015
 function object = bboxToPosScale(bbox)
 % convert bounding box in (u1,v1,u2,v2) coordinates
 % to (cu,cv,w,h) representation (center+size)
