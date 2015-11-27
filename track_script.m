@@ -1,11 +1,12 @@
 frame_dir = 'clip_1';
-ind = 64;
+start = 22;
+e = 200;
 % frame_dir2 = 'clip_2';
 % frame_dir3 = 'clip_3';
 
 % load tracklets
-t = face_track(frame_dir, 'code/dpm/clip1_det', 22, 200);
-tracklets = convertToKITTI(t, 22, 200);
+t = face_track(frame_dir, 'code/dpm/clip1_det', start, e);
+tracklets = convertToKITTI(t, start, e);
 % labels_write(t,'c1.txt');
 % tracklets = labels_read('c1.txt')
 
@@ -22,9 +23,9 @@ for i=1:length(tracklets)
     %bbox(:,5) = 1;
   end
   if isempty(strfind(frame_dir,'clip_3'))==0
-      name = sprintf('%04d.jpg', i+ind-1);
+      name = sprintf('%04d.jpg', i+start-1);
   else
-      name = sprintf('%03d.jpg', i+ind-1);
+      name = sprintf('%03d.jpg', i+start-1);
   end
   im = imread(fullfile(frame_dir, name));
   cla; plot_bbox(im,bbox);

@@ -3,7 +3,7 @@ function tracklets = face_track(frame_dir, det_dir, start_frame, end_frame)
 % det_dir is a path to the image detections
 % start_ and end_frame are the index of start and end images
 % Modified code which is credit from http://www.cvlibs.net/software/trackbydet/
-
+%mex assignmentoptimal.c
 for i = start_frame:end_frame
     if isempty(strfind(frame_dir,'clip_3'))==0
         name = sprintf('%04d.jpg', i);
