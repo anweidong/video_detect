@@ -42,7 +42,7 @@ Rico: Shot detection, logo detection, face tracking
          Also, put any code we wrote into code file seperated by division of work.
          
 ######2015-11-27
-**Rico:**
+**Rico:**  
          working on logo detection, finished clip2, 3
          
          code_data/logo/clip*_logo/ are the path of logo coordinates: coord = [x(:) y(:)],
