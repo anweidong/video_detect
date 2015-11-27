@@ -1,12 +1,9 @@
-function face_track(frame_dir, det_dir, start_frame, end_frame)
+function tracklets = face_track(frame_dir, det_dir, start_frame, end_frame)
 % frame_dir is a path to the images
 % det_dir is a path to the image detections
 % start_ and end_frame are the index of start and end images
 % Modified code which is credit from http://www.cvlibs.net/software/trackbydet/
 
-tracklets  = [];
-kfstate    = [];
-active     = [];
 for i = start_frame:end_frame
     if isempty(strfind(frame_dir,'clip_3'))==0
         name = sprintf('%04d.jpg', i);
@@ -21,17 +18,33 @@ for i = start_frame:end_frame
     if length(size(im))==3
         im = rgb2gray(im);
     end
-    I{i-first_frame+1} = im;
-    detection{i-first_frame+1} = bbox;
-end   
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %                   STAGE 1                    %
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    I{i-start_frame+1} = im;
+    detection{i-start_frame+1} = bbox;
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                   STAGE 1                    %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+tracklets  = [];
+kfstate    = [];
+active     = [];
+
+% for all frames do
+for i=1:length(detection)
+    
+    % output
+    fprintf('STAGE 1: Processing frame %d/%d\n',i,length(detection));
+    
+    % extract bounding box
+    bbox = detection{i};
     
     % convert to object detection representation
     object = bboxToPosScale(bbox);
+    
     % active tracklets
     idx_active = find(active);
+    
     % if active tracklets exist => try to associate
     if ~isempty(idx_active)
         
@@ -52,166 +65,128 @@ end
                 dist(j,:) = trackletLocation(object(:,1:4),tracklets{track_idx},I);
             end
         end
+        
+        % gating + hungarian assignment
+        dist(dist>0.2) = inf;
+        assignment = assignmentoptimal(dist);
+        
+        % extend active tracklets
+        for j=1:length(idx_active)
+            
+            % index of this tracklet
+            track_idx = idx_active(j);
+            
+            % assigned object detection index
+            obj_idx = assignment(j);
+            
+            % if a detection has been assigned => update state
+            if obj_idx>0
+                
+                kfstate{track_idx}.z = object(obj_idx,1:4)';
+                kfstate{track_idx}   = kfcorrect(kfstate{track_idx});
+                tracklets{track_idx} = [tracklets{track_idx}; i kfstate{track_idx}.x(1:4)'];
+                
+                % if no detection has been assigned => deactivate
+            else
+                active(track_idx) = 0;
+            end
+        end
+        
+        % remove assigned detections from object list
+        object(assignment(assignment>0),:) = [];
     end
-
-
-
-end
-
-
-
-function bbox = posScaleToBbox(object)
-% inverse of bboxToPosScale.m
-
-u1 = object(:,1)-object(:,3)/2;
-v1 = object(:,2)-object(:,4)/2;
-u2 = object(:,1)+object(:,3)/2;
-v2 = object(:,2)+object(:,4)/2;
-
-bbox = [u1 v1 u2 v2];
-
-function s = kfpredict(s)
-
-s.x = s.A*s.x;
-s.P = s.A*s.P*s.A' + s.Q;
-
-if s.x(3)<20
-  s.x(3) = 20;
-end
-
-if s.x(4)<20
-  s.x(4) = 20;
-end
-
-function dist = trackletLocation(object,tracklet,I)
-
-% intersection over union
-bbox1 = posScaleToBbox(object);
-bbox2 = posScaleToBbox(tracklet(end,2:5));
-dist_geo = 1.0-boxoverlap(bbox1,bbox2)';
-
-for i=1:size(object,1)
-  if dist_geo(i)<0.7
-    [c,d] = correlate_full(tracklet(end,1:5),[tracklet(end,1)+1 object(i,:)],I);
-    if d<0.2
-      dist_corr(i) = 1.0-c;
-    else
-      dist_corr(i) = inf;
+    
+    % add remaining detections as new tracks
+    for j=1:size(object,1)
+        
+        tracklets{end+1} = [i object(j,:)];
+        kfstate{end+1}   = kfinit(object(j,:),1,5);
+        active(end+1)    = 1;
+        
     end
-  else
-    dist_corr(i) = inf;
-  end
 end
 
-dist = dist_geo.*dist_corr;
-idx = dist_corr>0.4 | dist_geo>0.7;
-dist(idx) = inf;
+% remove short tracklets (smaller than 5 frames)
+if 1
+    idx = [];
+    for i=1:length(tracklets)
+        if size(tracklets{i},1)<5
+            idx = [idx i];
+        end
+    end
+    tracklets(idx) = [];
 end
 
-function bbox = posScaleToBbox(object)
-% inverse of bboxToPosScale.m
-
-u1 = object(:,1)-object(:,3)/2;
-v1 = object(:,2)-object(:,4)/2;
-u2 = object(:,1)+object(:,3)/2;
-v2 = object(:,2)+object(:,4)/2;
-
-bbox = [u1 v1 u2 v2];
+% add tracklet id
+for i=1:length(tracklets)
+    tracklets{i} = [tracklets{i} i*ones(size(tracklets{i},1),1)];
+    tracklets{i}
 end
 
-function o = boxoverlap(a, b)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                   STAGE 2                    %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% Compute the symmetric intersection over union overlap between a set of
-% bounding boxes in a and a single bounding box in b.
-%
-% a  a matrix where each row specifies a bounding box
-% b  a single bounding box
-
-x1 = max(a(:,1), b(1));
-y1 = max(a(:,2), b(2));
-x2 = min(a(:,3), b(3));
-y2 = min(a(:,4), b(4));
-
-w = x2-x1+1;
-h = y2-y1+1;
-inter = w.*h;
-aarea = (a(:,3)-a(:,1)+1) .* (a(:,4)-a(:,2)+1);
-barea = (b(3)-b(1)+1) * (b(4)-b(2)+1);
-
-% intersection over union overlap
-o = inter ./ (aarea+barea-inter);
-
-% set invalid entries to 0 overlap
-o(w <= 0) = 0;
-o(h <= 0) = 0;
+dist = inf*ones(length(tracklets));
+for i=1:length(tracklets)
+    
+    % output
+    fprintf('STAGE 2: Processing tracklet %d/%d\n',i,length(tracklets));
+    
+    for j=i+1:length(tracklets)
+        
+        % if non-successive or distance between tracklets too large
+        if tracklets{i}(end,1)<tracklets{j}(1,1) && tracklets{j}(1,1)-tracklets{i}(end,1)<=20
+            dist(i,j) = trackletAffinity(tracklets{i},tracklets{j},I,0);
+        end
+    end
 end
 
-function [c,d] = correlate_full(t1,t2,I)
+% gating
+dist(dist>0.2) = inf;
 
-% compute bounding boxes
-bbox_tmp = round(posScaleToBbox(t1(2:5)));
-bbox_img = round(posScaleToBbox(t2(2:5)));
+% hungarian assignment
+assignment = assignmentoptimal(dist);
 
-% enlarge search area by 25%
-m = ceil(0.25*t2(4));
-bbox_img(1) = max(bbox_img(1)-m,1);
-bbox_img(2) = max(bbox_img(2)-m,1);
-bbox_img(3) = min(bbox_img(3)+m,size(I{t2(1)},2));
-bbox_img(4) = min(bbox_img(4)+m,size(I{t2(1)},1));
-
-% clip template
-bbox_tmp(1) = max(bbox_tmp(1),1);
-bbox_tmp(2) = max(bbox_tmp(2),1);
-bbox_tmp(3) = min(bbox_tmp(3),size(I{t1(1)},2));
-bbox_tmp(4) = min(bbox_tmp(4),size(I{t1(1)},1));
-
-% extract template and search area
-T = I{t1(1)}(bbox_tmp(2):bbox_tmp(4),bbox_tmp(1):bbox_tmp(3));
-S = I{t2(1)}(bbox_img(2):bbox_img(4),bbox_img(1):bbox_img(3));
-
-% crop template upper and lower part by 15 %
-m = round(0.15*size(T,1));
-T = T(m+1:end-m,:);
-
-% crop template left and right part by 15 %
-m = round(0.15*size(T,2));
-T = T(:,m+1:end-m);
-
-% compute correlation score
-[c,d] = xcorr(T,S);
+% link tracklets
+tracklets_linked = [];
+for i=1:length(assignment)
+    
+    % add tracklet if assignment valid
+    if assignment(i)>=0
+        tracklets_linked{end+1} = tracklets{i};
+    end
+    
+    % linked tracklet
+    k = assignment(i);
+    while k>0
+        
+        obj1  = tracklets_linked{end}(end,1:end-1);
+        obj2  = tracklets{k}(1,1:end-1);
+        
+        % interpolate between 2 tracklets
+        if obj2(1)-obj1(1)>1
+            alpha = ((1:obj2(1)-obj1(1)-1)/(obj2(1)-obj1(1)))';
+            tracklet_ipol          = zeros(obj2(1)-obj1(1)-1,5);
+            tracklet_ipol(:,1)     = obj1(1)+1:obj2(1)-1;
+            tracklet_ipol(:,2:5)   = (1-alpha)*obj1(2:5)+alpha*obj2(2:5);
+            tracklets_linked{end} = [tracklets_linked{end}; ...
+                tracklet_ipol zeros(size(tracklet_ipol,1),1); ...
+                tracklets{k}];
+            
+            % create new tracklet
+        else
+            tracklets_new = tracklets{k};
+            tracklets_new(1:obj1(1)-obj2(1)+1,:) = [];
+            tracklets_linked{end} = [tracklets_linked{end}; ...
+                tracklets_new];
+        end
+        k_new = assignment(k);
+        assignment(k) = -1;
+        k = k_new;
+    end
 end
 
-function [c,d,u1,v1,C] = xcorr(T,S)
-% u1,v1 = search area pixel where upper left template corner is anchored
-
-if size(T,1)>size(S,1) || size(T,2)>size(S,2)
-  c  = -1;
-  d  = 1;
-  u1 = 0;
-  v1 = 0;
-  return;
-end
-
-% correlate
-C = normxcorr2(T,S);
-
-% crop
-m1 = floor((size(C,1)-(size(S,1)-size(T,1)))/2);
-m2 = floor((size(C,2)-(size(S,2)-size(T,2)))/2);
-c  = max(max(C(m1+1:end-m1,m2+1:end-m2)));
-
-% find bbox
-[i,j] = find(C==c,1,'first');
-u1 = j-size(T,2)+1;
-u2 = j;
-v1 = i-size(T,1)+1;
-v2 = i;
-
-% compute SAD
-if u1<1 || u2>size(S,2) || v1<1 || v2>size(S,1)
-  d = 1;
-else
-  D = imabsdiff(T,S(v1:v2,u1:u2));
-  d = double(mean(D(:)))/256.0;
-end
+% replace tracklets by tracklets linked in stage 2
+tracklets = tracklets_linked;
 end
