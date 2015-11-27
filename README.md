@@ -32,3 +32,7 @@ Rico: Shot detection, logo detection, face tracking
          shot1, shot2 and shot3 corresponding to clip_1 _2 _3 in shot_data/result are the final shot change image numbers
          
          Questions need to ask Prof: if partial shot change also counts? like 035 in clip_1
+
+######2015-11-25
+**Rico:**
+         finished face tracking, waiting for face detection result to test 
