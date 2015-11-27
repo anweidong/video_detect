@@ -44,5 +44,6 @@ Rico: Shot detection, logo detection, face tracking
 ######2015-11-27
 **Rico:**
          working on logo detection, finished clip2, 3
+         
          code_data/logo/clip*_logo/ are the path of logo coordinates: coord = [x(:) y(:)],
          so you can simply load coord%03d.mat for clip1 and 2, coord%04d.mat for clip3 to get the [x y] and then plot them
