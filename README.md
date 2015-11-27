@@ -33,6 +33,6 @@ Rico: Shot detection, logo detection, face tracking
          
          Questions need to ask Prof: if partial shot change also counts? like 035 in clip_1
 
-######2015-11-25
+######2015-11-26
 **Rico:**
          finished face tracking, waiting for face detection result to test 
