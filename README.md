@@ -50,3 +50,8 @@ Rico: Shot detection, logo detection, face tracking
          => coord = load coord%03d.mat for clip1 and 2, or coord%04d.mat for clip3,
          => coord = coord.coord 
          to get the [x y] and then plot them
+
+######2015-11-28
+**Rico:**  
+         Finished Tracking from the correct face detections.
+         Going to work on report.
