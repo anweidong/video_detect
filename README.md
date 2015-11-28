@@ -53,5 +53,5 @@ Rico: Shot detection, logo detection, face tracking
 
 ######2015-11-28
 **Rico:**  
-         Finished Tracking from the correct face detections.
+         Finished Tracking from the correct face detections.  
          Going to work on report.
