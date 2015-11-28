@@ -107,11 +107,11 @@ for i=1:length(detection)
     end
 end
 
-% remove short tracklets (smaller than 5 frames)
+% remove short tracklets (smaller than 3 frames)
 if 1
     idx = [];
     for i=1:length(tracklets)
-        if size(tracklets{i},1)<5
+        if size(tracklets{i},1)<3
             idx = [idx i];
         end
     end
