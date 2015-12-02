@@ -55,3 +55,12 @@ Rico: Shot detection, logo detection, face tracking
 **Rico:**  
          Finished Tracking from the correct face detections.  
          Going to work on report.
+
+######2015-12-1
+**Weidong:**  
+		 Finish classification using HOG+SVM classifier. For the training images, crop the face out to 32 by 32 gray scale images based on the corresponding '.mat' file. Doing both HOG and SVM by Matlab built-in functions |extractHOGFeatures| and |fitcecoc| respectively. Statistics and Machine Learning Toolbox(TM) and Computer Vision System Toolbox(TM) are required.
+		 For each frame, classifiy each face and get the average score for a whole track (0 for female, 1 for male) and rounded to the nearest integer (id is used). The result is not bad except the main person in the first clip. Sided-faces or rotated faces is classified badly.
+
+######2015-12-1
+**Weidong:**  
+		 Finish the whole visualization.
