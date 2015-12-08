@@ -2,7 +2,7 @@
 Computer Vision Project in University of Toronto
 
 
-all data has already been removed including clip1-3, train data, code data, and face_final.mat:  
+all data has already been removed including clip1-3, train data, code data, face_final.mat, sift package, track package:  
 
     The directories clip_* contain 3 short clips from various news programs. train_data contains training examples for male and female faces.
         Gary B. Huang, Marwan Mattar, Honglak Lee, and Erik Learned-Miller.
