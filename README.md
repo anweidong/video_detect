@@ -1,10 +1,27 @@
 # video_dect
-Final Project of csc420 in University of Toronto
+Computer Vision Project in University of Toronto
+
+
+all data has already been removed including clip1-3, train data, code data, and face_final.mat:  
+
+    The directories clip_* contain 3 short clips from various news programs. train_data contains training examples for male and female faces.
+        Gary B. Huang, Marwan Mattar, Honglak Lee, and Erik Learned-Miller.
+        Learning to Align from Scratch.
+        Advances in Neural Information Processing Systems (NIPS), 2012.
+
+    Each male/female face has accompanying mat file. It contains 4 points: left eye, right eye, nose and mouth. 
+
+    The directory 'dpm' which is used for face detection has the Deformable PartModel detector by felzenswalb et al. The trained face detector 'face_final.mat' performs face detection with this detector. http://markusmathias.bitbucket.org/2014_eccv_face_detection/
+
+    The sift package: http://vision.ucla.edu/~vedaldi/assets/sift/binaries/
+    The track package: http://www.cvlibs.net/software/trackbydet/ Note: only use coordinate and id inside tracklets struct, so deleted other attributes when I used this package.
+
 
 ######2015-11-23
 division of work
-Weidong: face detection, classification, visualization
-Rico: Shot detection, logo detection, face tracking
+Weidong: face detection, classification, visualization  
+Rico: Shot detection, logo detection, face tracking  
+
 
 ######2015-11-24
 **Weidong:**   
@@ -54,7 +71,6 @@ Rico: Shot detection, logo detection, face tracking
 ######2015-11-28
 **Rico:**  
          Finished Tracking from the correct face detections.  
-         Going to work on report.
 
 ######2015-12-1
 **Weidong:**  
